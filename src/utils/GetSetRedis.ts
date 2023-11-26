@@ -12,7 +12,7 @@ export async function GetSetRedis(
     redisClient: Redis,
     method: "GET" | "SET",
     key: string,
-    doc?: IssueDoc | IssueDoc[],
+    doc?: IssueDoc | IssueDoc[] | string,
     path: string = "$"
 ): Promise<[error: Error, result: unknown][]> {
     if (method === "SET") {

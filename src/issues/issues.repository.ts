@@ -12,6 +12,7 @@ import { FilterIssues } from "src/shared/types/filterIssues";
 import { UpdateIssueData, UpdateIssueDto } from "./dto/update-issue.dto";
 import { GetSetRedis, IssueDoc } from "src/utils/GetSetRedis";
 
+
 @Injectable()
 export class IssuesRepository {
     //to use time-to-live from configuration
@@ -85,9 +86,8 @@ export class IssuesRepository {
         this.logger.verbose(redisKey)
         try {
             //Looking for the data at the Redis First
-            const queriedCache = await this.redisClient.multi([
-                ["send_command", "JSON.GET", redisKey]
-            ]).exec()
+            
+            const queriedCache = await GetSetRedis(this.redisClient, "GET", redisKey);
 
             if (queriedCache[0][1] === null) {
                 this.logger.log(`Couldn't find issue: ${issueID} in cache, trying to look at mongodb`)
@@ -95,9 +95,7 @@ export class IssuesRepository {
 
                 this.logger.log(`Adding issue to cache: ${issueFromMongo}`)
 
-                await this.redisClient.multi([
-                    ["send_command", "JSON.SET", redisKey, "$", JSON.stringify(issueFromMongo)],
-                ]).exec()
+                await GetSetRedis(this.redisClient, "SET", redisKey, JSON.stringify(issueFromMongo))
                 this.redisClient.expire(redisKey, this.singleIssueTTL)
 
                 return issueFromMongo.toJSON()
@@ -114,6 +112,7 @@ export class IssuesRepository {
     }
 
     async getIssues(filter: FilterIssues): Promise<Issue[]> {
+        
         if (
             Object.getOwnPropertyNames(filter).includes("status") &&
             filter.status === Status.pendente &&
@@ -131,9 +130,8 @@ export class IssuesRepository {
                 const jsonResult = JSON.stringify(mongoResult);
 
                 this.logger.log("Adding query result from MongoDB to Redis cache")
-                await this.redisClient.multi([
-                    ["send_command", "JSON.SET", redisKey, "$", jsonResult]
-                ]).exec()
+                
+                await GetSetRedis(this.redisClient, "SET", redisKey, jsonResult)
                 this.redisClient.expire(redisKey, this.listOfIssueTTL)
 
                 return mongoResult;
@@ -175,40 +173,33 @@ export class IssuesRepository {
             const doc = await this.issueModel.findById(fields._id);
 
             this.logger.log("Successfuly saved in mongo. Now starting to save changes to cache")
-            GetSetRedis(this.redisClient, "SET", redisKey, doc as IssueDoc)
+            await GetSetRedis(this.redisClient, "SET", redisKey, JSON.stringify(doc));
 
-            this.redisClient.expire(redisKey, this.singleIssueTTL)
+            await this.redisClient.expire(redisKey, this.singleIssueTTL)
 
             if (doc.status === Status.pendente) {
                 let foundIssue: boolean = false;
                 
-                this.logger.log(`Modifying issue if is in list of pendentes`)
+                this.logger.log(`Modifying issue in list of pendentes`)
             
-                const redisResult = await GetSetRedis(this.redisClient, "GET", "issues:pendente")
-                const redisJSON = JSON.parse(redisResult[0][1] as string)
+                const redisResult = await GetSetRedis(this.redisClient, "GET", "issues:pendente");
+                let redisJSON: IssueDoc[] = JSON.parse(redisResult[0][1] as string);
                 
-                const newArray = redisJSON.map((value) => {
-                    if (value._id !== fields._id) {
-                        return;
+                redisJSON = redisJSON.map((issue) => {
+                    if (issue._id !== fields._id) {
+                        return issue;
+                    } else {
+                        return doc as IssueDoc;
                     }
-                    this.logger.log(`Found issue with id: ${doc._id} in list of pendente in redis`)
-                    
-                    foundIssue = true;
-                    
-                    return doc;
-                })
-
-                if (foundIssue) {
-                    const result = await GetSetRedis(this.redisClient, "SET", "issues:pendente", newArray);
-                }
-                
+                });
+                const result = await GetSetRedis(this.redisClient, "SET", "issues:pendente", JSON.stringify(redisJSON));
+                this.logger.log(`Changes in cache: ${result[0][1]}`);
             }
-
             return doc;
 
         } catch (error) {
             
-            this.logger.log(`An error as thorwn during update of issue: ${JSON.stringify(fields)}\n${error}`)
+            this.logger.log(`An error as thorwn during update of issue: ${JSON.stringify(fields)}\n${error}`);
 
             throw error;
         }
