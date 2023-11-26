@@ -3,7 +3,6 @@ import { User } from "../user-types";
 
 
 export interface IssueCreateData {
-    id: string;
     topic: string;
     description: string;
     urgency: Urgency;

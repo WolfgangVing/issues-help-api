@@ -4,6 +4,7 @@ import { Urgency } from "src/shared/issue-types";
 import { User } from "src/shared/user-types";
 
 export class CreateIssueDto {
+    @IsObject()
     @IsInstance(UserDto)
     client: UserDto
 

@@ -30,7 +30,6 @@ export class IssuesRepository {
     }
 
     async createIssue({
-        id,
         topic,
         description,
         urgency,
@@ -49,11 +48,10 @@ export class IssuesRepository {
         //Creates the models
         const issueModel = new this.issueModel(initialIssue);
         redisKey = `issues:${issueModel._id.toString()}`
-        const userModel = new this.userModel(initialIssue.client);
+
 
         this.logger.log(`Adding new issue ${JSON.stringify(issueModel)} in MongoDB`)
         try {
-            issueModel.client = userModel;
             const result = await issueModel.save();
         } catch (e) {
             this.logger.error(`Failed to add issue ${JSON.stringify(issueModel)} to MongoDB\n${e}`)

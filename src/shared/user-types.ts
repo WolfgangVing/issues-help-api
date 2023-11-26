@@ -3,6 +3,11 @@ import mongoose from "mongoose"
 
 @Schema()
 export class User {
+
+    @Prop(
+        {type: mongoose.Schema.Types.ObjectId}
+    )
+    _id: string;
     @Prop()
     name: string
 }

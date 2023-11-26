@@ -17,8 +17,7 @@ export class IssuesService {
   async createIssue(fields: CreateIssueDto): Promise<Issue> {
     const issueID = createIssueID();
     const createdIssue = await this.issuesRepository.createIssue({
-      id: issueID,
-      client: (fields.client as User),
+      client: fields.client,
       description: fields.description,
       topic: fields.topic,
       urgency: fields.urgency

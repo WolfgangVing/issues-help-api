@@ -1,7 +1,7 @@
 import { IsString, IsUUID, Length } from "class-validator";
 
 export class UserDto {
-    @IsUUID()
+    @IsString()
     _id: string;
 
     @IsString()
