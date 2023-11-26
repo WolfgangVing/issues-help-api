@@ -1,0 +1,6 @@
+{
+    "material-icon-theme.files.associations": {
+        "*.interceptor.ts": "nest-service",
+        "*.repository.ts": "typescript"
+    }
+}
