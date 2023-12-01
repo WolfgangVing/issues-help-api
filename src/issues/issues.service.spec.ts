@@ -5,12 +5,6 @@ import { IssuesRepository } from './issues.repository';
 describe('IssuesService', () => {
   let service: IssuesService;
   let repository: IssuesRepository;
-  let createdIssue = {
-
-  }
-  let dataToCreateIssue = {
-    
-  }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,10 +18,4 @@ describe('IssuesService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-
-  describe("createIssue", () => {
-    it("should create and return a issue", async() => {
-      const result = createdIssue;
-    })
-  })
 });

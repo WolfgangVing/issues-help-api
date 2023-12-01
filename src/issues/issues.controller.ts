@@ -19,6 +19,7 @@ export class IssuesController {
   @Get()
   async findAll(@Query() query: FilterIssues) {
     const result = await this.issuesService.findAll(query);
+    
     return result;
   }
 

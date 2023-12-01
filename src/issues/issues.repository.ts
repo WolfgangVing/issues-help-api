@@ -199,7 +199,7 @@ export class IssuesRepository {
 
         } catch (error) {
             
-            this.logger.log(`An error as thorwn during update of issue: ${JSON.stringify(fields)}\n${error}`);
+            this.logger.log(`An error was thrown during update of issue: ${JSON.stringify(fields)}\n${error}`);
 
             throw error;
         }
