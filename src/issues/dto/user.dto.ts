@@ -1,4 +1,5 @@
-import { IsString, IsUUID, Length } from "class-validator";
+import { IsEnum, IsString, IsUUID, Length } from "class-validator";
+import { Roles } from "src/shared/roles.enum";
 
 export class UserDto {
     @IsString()

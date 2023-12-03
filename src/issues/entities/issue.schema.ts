@@ -1,8 +1,14 @@
 import { Prop, Schema, SchemaFactory, } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Status, Urgency } from "src/shared/issue-types";
-import { User } from "src/shared/user-types";
+import { Roles } from "src/shared/roles.enum";
+import { User } from "src/users/entities/user.schema";
 
+export class Client {
+    _id: string;
+    name: string;
+    role: Roles
+}
 @Schema({
     timestamps: true
 })
@@ -31,7 +37,7 @@ export class Issue {
     @Prop({
         type: mongoose.Schema.Types.ObjectId, ref: "Client"
     })
-    client: User;
+    client: Client;
 
     @Prop({
         type: String, enum: Urgency
