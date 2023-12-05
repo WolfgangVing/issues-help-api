@@ -4,8 +4,8 @@ import { UpdateIssueDto } from './dto/update-issue.dto';
 import { createIssueID } from 'src/utils/GenerateID';
 import { IssuesRepository } from './issues.repository';
 import { Issue } from './entities/issue.schema';
-import { User } from 'src/shared/user-types';
 import { FilterIssues } from 'src/shared/types/filterIssues';
+import { Roles } from 'src/shared/roles.enum';
 
 @Injectable()
 export class IssuesService {
@@ -17,7 +17,10 @@ export class IssuesService {
   async createIssue(fields: CreateIssueDto): Promise<Issue> {
     const issueID = createIssueID();
     const createdIssue = await this.issuesRepository.createIssue({
-      client: fields.client,
+      client: {
+        ...fields.client,
+        role: Roles.Client
+      },
       description: fields.description,
       topic: fields.topic,
       urgency: fields.urgency

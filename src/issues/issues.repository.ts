@@ -7,7 +7,6 @@ import { Issue } from "./entities/issue.schema";
 import { InjectConnection, InjectModel } from "@nestjs/mongoose";
 import mongoose, { Connection, Model } from "mongoose";
 import { Status } from "src/shared/issue-types";
-import { User } from "src/shared/user-types";
 import { FilterIssues } from "src/shared/types/filterIssues";
 import { UpdateIssueData, UpdateIssueDto } from "./dto/update-issue.dto";
 import { GetSetRedis, IssueDoc } from "src/utils/GetSetRedis";
@@ -24,7 +23,6 @@ export class IssuesRepository {
         configService: ConfigService,
         @Inject(IORedisKey) private readonly redisClient: Redis,
         @InjectModel(Issue.name) private readonly issueModel: Model<Issue>,
-        @InjectModel(User.name) private readonly userModel: Model<User>
     ) {
         this.singleIssueTTL = configService.get("SINGLE_ISSUE_DURATION")
         this.listOfIssueTTL = configService.get("ISSUES_DURATION")

@@ -7,7 +7,7 @@ import { IssuesRepository } from './issues.repository';
 import { Mongoose } from 'mongoose';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Issue, IssueSchema } from './entities/issue.schema';
-import { User, UserSchema } from 'src/shared/user-types';
+import { User, UserSchema } from 'src/users/entities/user.schema';
 
 @Module({
   imports: [ConfigModule, redisModule, MongooseModule.forFeature([

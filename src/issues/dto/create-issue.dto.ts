@@ -1,7 +1,6 @@
-import { IsIn, IsInstance, IsObject, IsString, IsUUID, Length } from "class-validator";
+import { IsIn, IsInstance, IsObject, IsString, Length } from "class-validator";
 import { UserDto } from "./user.dto";
 import { Urgency } from "src/shared/issue-types";
-import { User } from "src/shared/user-types";
 
 export class CreateIssueDto {
     @IsObject()
