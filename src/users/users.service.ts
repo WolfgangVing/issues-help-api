@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
@@ -6,9 +6,12 @@ import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger();
+
   constructor(
     private readonly usersRepository: UsersRepository
-  ) {}
+  ) { }
+  
   async create(createUserDto: CreateUserDto) {
     const result = await this.usersRepository.createUser(createUserDto)
     const userDto: UserDto = {
@@ -22,12 +25,18 @@ export class UsersService {
     return userDto;
   }
 
+  async findOne(email: string) {
+    const result = await this.usersRepository.findOneToSignIn(email);
+
+    return result;
+  }
+
   async findAll() {
     const result = await this.usersRepository.findAll()
     return result;
   }
   
-  async findOne(id: string) {
+  async findByID(id: string) {
     const result = await this.usersRepository.findById(id)
     return result;
   }

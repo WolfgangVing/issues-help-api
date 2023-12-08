@@ -4,7 +4,6 @@ import { Urgency } from "src/shared/issue-types";
 
 export class CreateIssueDto {
     @IsObject()
-    @IsInstance(UserDto)
     client: UserDto
 
     @IsString()
@@ -16,6 +15,6 @@ export class CreateIssueDto {
     description: string;
 
     @IsString()
-    @IsIn(["Baixo", "Medio", "Alto"])
+    @IsIn(["baixo", "medio", "alto"])
     urgency: Urgency;
 }

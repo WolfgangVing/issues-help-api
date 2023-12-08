@@ -1,4 +1,4 @@
-import { Roles } from "../roles.enum"
+import { Role } from "../roles.enum"
 
 export interface IUser  {
     name: string
@@ -9,5 +9,5 @@ export interface IUser  {
 
     email: string
 
-    role: Roles
+    role: Role
 }

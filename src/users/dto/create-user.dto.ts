@@ -1,6 +1,6 @@
 import { IsEmail, IsEnum, IsPhoneNumber, IsString, Length, MinLength } from "class-validator";
 import { IUser } from "src/shared/interfaces/IUser";
-import { Roles } from "src/shared/roles.enum";
+import { Role } from "src/shared/roles.enum";
 
 export class CreateUserDto implements IUser {
     @IsString()
@@ -21,6 +21,6 @@ export class CreateUserDto implements IUser {
     })
     email: string
 
-    @IsEnum(Roles)
-    role: Roles = Roles.Client
+    @IsEnum(Role)
+    role: Role = Role.Client
 }

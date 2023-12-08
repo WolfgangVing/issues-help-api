@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory, } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Status, Urgency } from "src/shared/issue-types";
-import { Roles } from "src/shared/roles.enum";
+import { Role } from "src/shared/roles.enum";
 import { User } from "src/users/entities/user.schema";
 
 export class Client {
     _id: string;
     name: string;
-    role: Roles
+    role: Role
 }
 @Schema({
     timestamps: true

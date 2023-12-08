@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Roles } from "src/shared/roles.enum";
+import { Role } from "src/shared/roles.enum";
 import * as bcrypt from "bcrypt"
+import { Model, Types } from "mongoose";
 
 @Schema({
     timestamps: true
@@ -13,7 +14,20 @@ export class User {
     name: string
 
     @Prop({
-        required: true
+        required: true,
+        index: {
+            unique: true,
+        },
+        validate: {
+            validator: async function (email: string): Promise<boolean> {
+                const model = await this.constructor as Model<User>;
+                const id = await this._id as Types.ObjectId;
+                const user = await model.exists({ email }).exec();
+
+                return user === null || this._id.equals(user._id);
+            },
+            message: "Already used email"
+        }
     })
     email: string
 
@@ -29,10 +43,10 @@ export class User {
 
     @Prop({
         type: String,
-        enum: Roles,
-        default: Roles.Client
+        enum: Role,
+        default: Role.Client
     })
-    role: Roles
+    role: Role
 }
 
 const UserSchema = SchemaFactory.createForClass(User);

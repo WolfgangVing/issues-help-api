@@ -5,7 +5,7 @@ import { createIssueID } from 'src/utils/GenerateID';
 import { IssuesRepository } from './issues.repository';
 import { Issue } from './entities/issue.schema';
 import { FilterIssues } from 'src/shared/types/filterIssues';
-import { Roles } from 'src/shared/roles.enum';
+import { Role } from 'src/shared/roles.enum';
 
 @Injectable()
 export class IssuesService {
@@ -19,7 +19,7 @@ export class IssuesService {
     const createdIssue = await this.issuesRepository.createIssue({
       client: {
         ...fields.client,
-        role: Roles.Client
+        role: Role.Client
       },
       description: fields.description,
       topic: fields.topic,

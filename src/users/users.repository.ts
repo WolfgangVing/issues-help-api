@@ -6,7 +6,6 @@ import { IssuesRepository } from "src/issues/issues.repository";
 import { IORedisKey } from "src/redis.module";
 import { User } from "./entities/user.schema";
 import { Model } from "mongoose";
-import { Roles } from "src/shared/roles.enum";
 import { GetSetRedis } from "src/utils/GetSetRedis";
 import { IUser } from "src/shared/interfaces/IUser";
 
@@ -38,7 +37,7 @@ export class UsersRepository {
             await model.save();
         } catch (err) {
             this.logger.error(`Failed to add user ${JSON.stringify(model)} in mongoDB: ${err}`)
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(err);
         }
 
         this.logger.log(`Adding User credentials to cache with TTL:${this.UserAuthTTL}`)
@@ -64,6 +63,18 @@ export class UsersRepository {
             this.logger.log(`An error was ocurred in database, ${err}`)
 
             throw new InternalServerErrorException()
+        }
+    }
+
+    async findOneToSignIn(email: string) {
+        try {
+            const doc = await this.userModel.findOne({
+                email: email
+            })
+            return doc
+        } catch (err) {
+            this.logger.error(`An error occurred while retrieving data of user ${email} in database`)
+            throw new InternalServerErrorException;
         }
     }
 
