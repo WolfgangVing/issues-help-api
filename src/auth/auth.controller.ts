@@ -2,7 +2,9 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Post, Request, Use
 import { AuthService } from './auth.service';
 import { SignInDTO } from './dto/sign-in.dto';
 import { AuthGuard } from './guard/auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags("Auth")
 @Controller('auth')
 export class AuthController {
     private readonly logger = new Logger();

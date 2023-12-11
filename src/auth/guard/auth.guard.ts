@@ -22,19 +22,18 @@ export class AuthGuard implements CanActivate {
             context.getHandler(),
             context.getClass(),
         ]);
+
         if (isPublic) {
             return true;
         }
 
-        const requiredRoles = this.reflactor.getAllAndOverride<string>(ROLES_KEY, [
+        const requiredRoles: string[] | undefined = this.reflactor.getAllAndOverride<string[]>(ROLES_KEY, [
             context.getHandler(),
             context.getClass()
         ])
-
-
         const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
-        
+
         if (!token) {
             throw new UnauthorizedException();
         }
@@ -46,21 +45,27 @@ export class AuthGuard implements CanActivate {
                     secret: this.configService.get<string>("JWT_SECRET")
                 },
             );
-            
             // We're assigning the payload to the request object here
             // so that we can access it in our route handlers
             request['user'] = payload;
+
+            //if there isn't a roles in metadata or was provided but there isn't a value in the array it's return 
+            if (requiredRoles === undefined || requiredRoles.length === 0) {
+                return true;
+            }
 
             //checking if route has role-based access control
             const claimRole = payload['role']
             const hasRole = requiredRoles.includes(claimRole)
 
-            if (requiredRoles.length > 0 && !hasRole) {
-                this.logger.error(`User permission: ${claimRole} not enough, required permissions: ${requiredRoles}`)
+            if (!hasRole) {
+                this.logger.error(`User permission: ${claimRole} not enough, required permissions: ${requiredRoles}`);
+                
                 return false;
             }
             
-        } catch {
+        } catch (err){
+            this.logger.log(`An error occurrend while validating token and permission: ${err}`)
             throw new UnauthorizedException()
         }
 

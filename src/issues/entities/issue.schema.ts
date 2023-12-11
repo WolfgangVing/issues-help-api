@@ -7,7 +7,6 @@ import { User } from "src/users/entities/user.schema";
 export class Client {
     _id: string;
     name: string;
-    role: Role
 }
 @Schema({
     timestamps: true

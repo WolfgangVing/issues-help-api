@@ -118,9 +118,7 @@ export class IssuesRepository {
         ) {
             this.logger.log("Verying if list of issues with Status pendente aren't cached")
             const redisKey = "issues:pendente"
-            const redisResult = await this.redisClient.multi([
-                ["send_command", "JSON.GET", "issues:pendente"]
-            ]).exec()
+            const redisResult = await GetSetRedis(this.redisClient, "GET", "issues:pendente")
 
             if (redisResult[0][1] === null) {
                 this.logger.log("There isn't list of pendente issues, prociding to query in mongodb")

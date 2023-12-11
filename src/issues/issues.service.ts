@@ -6,6 +6,8 @@ import { IssuesRepository } from './issues.repository';
 import { Issue } from './entities/issue.schema';
 import { FilterIssues } from 'src/shared/types/filterIssues';
 import { Role } from 'src/shared/roles.enum';
+import { User } from 'src/users/entities/user.schema';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class IssuesService {
@@ -14,12 +16,12 @@ export class IssuesService {
   constructor(private readonly issuesRepository: IssuesRepository) { };
 
 
-  async createIssue(fields: CreateIssueDto): Promise<Issue> {
-    const issueID = createIssueID();
+  async createIssue(fields: CreateIssueDto, user: Partial<User> & {sub: string}): Promise<Issue> {
+
     const createdIssue = await this.issuesRepository.createIssue({
       client: {
-        ...fields.client,
-        role: Role.Client
+        _id: user.sub,
+        name: user.name
       },
       description: fields.description,
       topic: fields.topic,

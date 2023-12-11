@@ -1,5 +1,5 @@
 import { Client } from "src/issues/entities/issue.schema";
-import { Status, Urgency } from "../issue-types";
+import { Urgency } from "../issue-types";
 
 
 

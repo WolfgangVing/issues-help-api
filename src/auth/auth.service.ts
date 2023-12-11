@@ -13,7 +13,6 @@ export class AuthService {
         private readonly userService: UsersService,
         private readonly jwtService: JwtService
     ) { }
-
     async signIn({ email, password }: SignInDTO) {
         const user = await this.userService.findOne(email);
 
@@ -23,17 +22,20 @@ export class AuthService {
             throw new UnauthorizedException();
         }
 
-        const result = {
+        const payload = {
+            sub: user._id.toString(),
             email: user.email,
             name: user.name,
-            role: user.role,
-            phone: user.phone
+            phone: user.phone,
+            role: user.role
         };
-
-        const payload = { sub: user._id.toString(), name: user.name, phone: user.phone, role: user.role };
 
         return {
-            access_token: await this.jwtService.signAsync(payload)
+            access_token: await this.generateToken(payload)
         };
+    }
+
+    async generateToken(userCredentials: {sub: string,email: string, name: string, phone: string, role: string }) {
+        return await this.jwtService.signAsync(userCredentials);
     }
 }
