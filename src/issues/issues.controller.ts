@@ -10,11 +10,11 @@ import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags("Issues")
 @Controller('issues')
+@UseGuards(AuthGuard)
 export class IssuesController {
   constructor(private readonly issuesService: IssuesService) { }
 
   @Roles(Role.Client)
-  @UseGuards(AuthGuard)
   @Post()
   async create(@Body() createIssueDto: CreateIssueDto,@Request() request) {
     const userToken = request.user;
@@ -26,7 +26,6 @@ export class IssuesController {
 
 
   @Roles(Role.Operator, Role.Admin)
-  @UseGuards(AuthGuard)
   @Get()
   async findAll(@Query() query: FilterIssues) {
     const result = await this.issuesService.findAll(query);
@@ -40,12 +39,14 @@ export class IssuesController {
   }
 
   @Roles(Role.Admin, Role.Operator)
+  @Patch()
   update(@Param('id') id: string, @Body() updateIssueDto: UpdateIssueDto) {
     const result = this.issuesService.update(id, updateIssueDto);
 
     return result;
   }
 
+  @Roles(Role.Admin)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.issuesService.remove(+id);
